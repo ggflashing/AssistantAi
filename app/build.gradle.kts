@@ -8,7 +8,7 @@ plugins {
 
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    kotlin("plugin.serialization") version "2.2.0"
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 val localProperties = Properties()
@@ -53,6 +53,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
+    }
+
+    configurations.all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+
+
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -75,6 +85,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    ksp("androidx.room:room-compiler:2.5.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -95,15 +108,15 @@ dependencies {
 
     implementation(libs.androidx.hilt.navigation.compose)
 
+
 // Gson for converting your data class to a savable string
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("org.jetbrains.kotlin:kotlin-serialization:1.5.0")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.5-beta")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
+
     implementation("androidx.compose.material:material-icons-extended")
 
 

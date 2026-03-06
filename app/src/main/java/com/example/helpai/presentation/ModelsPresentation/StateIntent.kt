@@ -34,7 +34,4 @@ interface StateIntent {
 
     }
 
-
-
-
 }

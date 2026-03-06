@@ -5,6 +5,5 @@ import com.google.gson.annotations.SerializedName
 data class ContentRequst(
 
     @SerializedName("contents")
-    val content : List<Parts>
-
+    val content: List<Parts>
 )

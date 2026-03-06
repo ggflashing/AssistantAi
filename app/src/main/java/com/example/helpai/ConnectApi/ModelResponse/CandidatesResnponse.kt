@@ -17,7 +17,4 @@ data class CandidatesResnponse(
     @SerializedName("responseId")
     val responseId: String? = null
 
-
-
-
 )

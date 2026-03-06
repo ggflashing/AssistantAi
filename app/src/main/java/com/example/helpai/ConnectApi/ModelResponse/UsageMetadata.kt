@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class UsageMetadata(
 
-
     @SerializedName("promptTokenCount")
     val promptTokenCount: Int,
 
