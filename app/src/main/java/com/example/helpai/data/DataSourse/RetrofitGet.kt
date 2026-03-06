@@ -8,37 +8,42 @@ import com.example.helpai.ConnectApi.ModelRequst.Parts
 import com.example.helpai.ConnectApi.ModelRequst.TextRequst
 import com.example.helpai.ConnectApi.ModelResponse.CandidatesResnponse
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class RetrofitGet @Inject constructor(private val api: ServisApi)  {
-
+class RetrofitGet @Inject constructor(
+    private val api: ServisApi,
+    private val chatDao: Dao
+) {
     private val geminiApiKey = BuildConfig.GeminiApiKey.trim()
-
     suspend fun getResponse(promtText: String): CandidatesResnponse{
 
-        val text = ContentRequst(
-            content = listOf(
+        chatDao.insert(ChatMessageEntity(role = "user", text = promtText))
+
+        val history = chatDao.getAllListChat().first()
+
+        val request = ContentRequst(
+            content = history.takeLast(20).map { message ->
                 Parts(
-                    role = "user",
-                    part = listOf(TextRequst(promtText))
-
+                    role = message.role,
+                    part = listOf(
+                        TextRequst(message.text)
+                    )
                 )
-
-            )
+            }
         )
 
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        Log.d("RetrofitRequest", gson.toJson(text))
+        val response = api.getContent(
+            Apikey = geminiApiKey,
+            responsPromt = request
+        )
 
-        Log.d("GeminiResponse", gson.toJson(text))
+        val modelText = response.candidatesRespons?.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: ""
 
-        val response = api.getContent(Apikey = geminiApiKey, responsPromt = text)
+        chatDao.insert(ChatMessageEntity(role = "model", text = modelText))
 
         Log.d("GeminiResponse", "Raw Response: $response")
 
         return response
-
-
-
     }
 }

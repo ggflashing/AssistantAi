@@ -2,12 +2,15 @@ package com.example.helpai.Domain.mappingDomain
 
 import com.example.helpai.ConnectApi.ModelResponse.TextRespons
 import com.example.helpai.Domain.DomainModels.ModelsDomain
+import com.example.helpai.data.DataSourse.ChatMessageEntity
 
 
-fun TextRespons.toDomain(): ModelsDomain {
+fun ChatMessageEntity.toDomain(): ModelsDomain {
 
     return ModelsDomain(
-        textDomain = this.text
+        text = text,
+        role = role,
+        timestamp = timestamp
     )
 
 }

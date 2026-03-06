@@ -73,7 +73,7 @@ fun CardResponsAI(
 
             ){
 
-                Text(text = textUI.joinToString { it.textDomain },
+                Text(text = textUI.joinToString { it.text },
                     color = Color.White,
                     modifier = Modifier.padding(7.dp),
                     lineHeight = 22.sp,

@@ -1,5 +1,6 @@
 package com.example.helpai.ConnectApi.ModelResponse
 
+import com.example.helpai.ConnectApi.ModelRequst.TextRequst
 import com.google.gson.annotations.SerializedName
 
 data class parts(

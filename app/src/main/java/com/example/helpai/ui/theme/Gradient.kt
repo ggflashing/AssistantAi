@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 object Gradient {
-
     val colorServer = Brush.linearGradient(
         colors = listOf(
             Color(0xFF833AB4),
@@ -12,11 +11,7 @@ object Gradient {
             Color(0xFFF77737)
 
         )
-
-
     )
-
-
     val colorButton = Brush.linearGradient(
         colors = listOf(
             Color(0xFF8E2DE2),
@@ -25,16 +20,12 @@ object Gradient {
 
         )
 
-
     )
-
     val ColorUserMassage = Brush.linearGradient(
         colors = listOf(
             Color(0xFF4361EE),
             Color(0xFFB5179E),
             Color(0xFFFF8C42)
         )
-
     )
-
 }

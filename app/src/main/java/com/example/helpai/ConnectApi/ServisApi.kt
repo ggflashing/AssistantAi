@@ -9,13 +9,12 @@ import retrofit2.http.Query
 
 interface ServisApi {
 
-    @POST("v1beta/models/gemini-2.5-flash:generateContent")
+    @POST("v1beta/models/gemini-3.1-flash-lite-preview:generateContent")
     suspend fun getContent(
 
         @Query ("key") Apikey : String,
         @Body responsPromt : ContentRequst
 
     ): CandidatesResnponse
-
 
 }
