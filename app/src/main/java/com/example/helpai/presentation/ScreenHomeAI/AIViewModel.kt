@@ -56,12 +56,9 @@ class AIViewModel @Inject constructor(
                             ChatMessage.Server(listOf(domain), getCurrentTime())
                         }
                     }
-                    val finalMessages =
-                        if (state.isLoading) mappedMessages + ChatMessage.Typing
-                        else mappedMessages
 
                     state.copy(
-                        messagesList = finalMessages
+                        messagesList = mappedMessages
                     )
 
                 }
