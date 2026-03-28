@@ -118,6 +118,7 @@ dependencies {
 
 
     implementation("androidx.compose.material:material-icons-extended")
-
+//gemini
+    implementation("com.google.ai.client:generativeai:0.2.0")
 
 }
