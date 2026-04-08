@@ -22,4 +22,4 @@ jobs:
 
     - name: Build APK
       
-      run: ./gradlew assembleRelease -PGEMINIAPIKEY=AIzaSyCKNHaaZhiW41cS_9Oj1AoC1jRoy9-NCcY
+      run: ./gradlew assembleRelease -PGEMINIAPIKEYY=AIzaSyCKNHaaZhiW41cS_9Oj1AoC1jRoy9-NCcY
