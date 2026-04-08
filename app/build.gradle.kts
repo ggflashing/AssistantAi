@@ -11,12 +11,14 @@ plugins {
     kotlin("plugin.serialization") version "2.0.20"
 }
 
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-}
-val geminiApiKey = localProperties.getProperty("GeminiApiKey") ?: ""
+//val localProperties = Properties()
+//val localPropertiesFile = rootProject.file("local.properties")
+//if (localPropertiesFile.exists()) {
+//    localProperties.load(FileInputStream(localPropertiesFile))
+//}
+//val geminiApiKey = localProperties.getProperty("GeminiApiKey") ?: ""
+
+val apiKey = project.findProperty("GEMINIAPIKEY") as? String ?: ""
 
 
 android {
@@ -28,7 +30,7 @@ android {
 
 
     defaultConfig {
-        buildConfigField("String", "GeminiApiKey", "\"$geminiApiKey\"")
+        buildConfigField ("String", "GEMINIAPIKEY", "\"${apiKey}\"")
         applicationId = "com.example.helpai"
         minSdk = 24
         targetSdk = 36

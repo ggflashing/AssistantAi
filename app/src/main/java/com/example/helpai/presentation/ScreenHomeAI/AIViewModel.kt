@@ -37,7 +37,6 @@ class AIViewModel @Inject constructor(
     private val LogicUse: LogicUse
 
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(StateIntent.State())
     val state: StateFlow<StateIntent.State> = _state
 
