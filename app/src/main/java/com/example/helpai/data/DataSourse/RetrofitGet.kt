@@ -15,8 +15,13 @@ class RetrofitGet @Inject constructor(
     private val api: ServisApi,
     private val chatDao: Dao
 ) {
-    private val geminiApiKey = BuildConfig.GeminiApiKey.trim()
+    val geminiKey = BuildConfig.GEMINIAPIKEY.trim()
+
+
+
     suspend fun getResponse(promtText: String): CandidatesResnponse{
+
+
 
         chatDao.insert(ChatMessageEntity(role = "user", text = promtText))
 
@@ -34,7 +39,7 @@ class RetrofitGet @Inject constructor(
         )
 
         val response = api.getContent(
-            Apikey = geminiApiKey,
+            Apikey = geminiKey,
             responsPromt = request
         )
 

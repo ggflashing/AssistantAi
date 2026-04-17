@@ -18,7 +18,15 @@ plugins {
 //}
 //val geminiApiKey = localProperties.getProperty("GeminiApiKey") ?: ""
 
-val apiKey = project.findProperty("GEMINIAPIKEY") as? String ?: ""
+val props =  Properties()
+val file = rootProject.file("local.properties")
+
+if (file.exists()) {
+    props.load(FileInputStream(file))
+}
+
+val geminiKey = props.getProperty("GEMINIAPIKEY", "")
+
 
 
 android {
@@ -30,7 +38,7 @@ android {
 
 
     defaultConfig {
-        buildConfigField ("String", "GEMINIAPIKEY", "\"${apiKey}\"")
+        buildConfigField ("String", "GEMINIAPIKEYY", "\"${geminiKey}\"")
         applicationId = "com.example.helpai"
         minSdk = 24
         targetSdk = 36
