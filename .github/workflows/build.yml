@@ -1,25 +1,28 @@
-name: Build APK
+name: Android CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-    - name: Build APK
-      
-      run: ./gradlew assembleRelease -PGEMINIAPIKEYY=AIzaSyCKNHaaZhiW41cS_9Oj1AoC1jRoy9-NCcY
+      - name: Create local.properties with secret
+        run: |
+          echo "sdk.dir=" > local.properties
+          echo "GEMINIAPIKEY=${{ secrets.GEMINIAPIKEY }}" >> local.properties
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
