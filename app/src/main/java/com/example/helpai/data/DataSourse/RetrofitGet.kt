@@ -17,8 +17,6 @@ class RetrofitGet @Inject constructor(
 ) {
     val geminiKey = BuildConfig.GEMINIAPIKEY.trim()
 
-
-
     suspend fun getResponse(promtText: String): CandidatesResnponse{
 
 
