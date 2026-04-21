@@ -1,28 +1,44 @@
-name: Android CI
+name: Android AI CI
 
-on: [push]
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Prompt from Android"
+        required: true
+        type: string
 
 jobs:
-  build:
+  ai-job:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Create local.properties with secret
+      - name: Call Gemini API
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }}
         run: |
-          echo "sdk.dir=" > local.properties
-          echo "GEMINIAPIKEY=${{ secrets.GEMINIAPIKEY }}" >> local.properties
+          RESPONSE=$(curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINIAPIKEY}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"contents\": [{
+                \"role\": \"user\",
+                \"parts\": [{
+                  \"text\": \"${{ inputs.prompt }}\"
+                }]
+              }]
+            }")
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+          echo "$RESPONSE" > response.json
 
-      - name: Build APK
-        run: ./gradlew assembleDebug
+      - name: Extract clean text
+        run: |
+          TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text')
+
+          echo "{ \"result\": \"$TEXT\" }" > result.json
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-result
+          path: result.json
