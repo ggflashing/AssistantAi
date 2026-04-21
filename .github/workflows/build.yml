@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Gemini API
+      - name: Call Gemini API (POST)
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }} 
         run: |
+          # Отправляем POST запрос к Gemini API с текстом, который пришел из Android
           RESPONSE=$(curl -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINIAPIKEY}" \
             -H "Content-Type: application/json" \
@@ -26,23 +27,25 @@ jobs:
                 \"parts\": [{
                   \"text\": \"${{ inputs.prompt }}\"
                 }]
-              }]
+              }]"
             }")
-          echo "Response: $RESPONSE"
+
+        
           echo "$RESPONSE" > response.json
 
-      - name: Extract clean text
+      - name: Extract clean text from Gemini response
         run: |
-          echo "Raw response: $(cat response.json)"
+         
           TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text')
           if [ "$TEXT" == "null" ]; then
-          echo "Text extraction failed"
+            echo "Text extraction failed"
           else
-          echo "{ \"result\": \"$TEXT\" }" > result.json
-          echo "Result saved to result.json"
+           
+            echo "{ \"result\": \"$TEXT\" }" > result.json
+            echo "Result saved to result.json"
           fi
 
-      - name: Upload result
+      - name: Upload result artifact
         uses: actions/upload-artifact@v4
         with:
           name: ai-result
