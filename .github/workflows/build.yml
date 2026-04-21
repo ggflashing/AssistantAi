@@ -19,7 +19,7 @@ jobs:
         run: |
           # Отправляем POST запрос к Gemini API с текстом, который пришел из Android
           RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINIAPIKEY}" \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_API_KEY}" \
             -H "Content-Type: application/json" \
             -d "{
               \"contents\": [{
