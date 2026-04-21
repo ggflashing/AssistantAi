@@ -39,6 +39,7 @@ jobs:
           echo "Text extraction failed"
           else
           echo "{ \"result\": \"$TEXT\" }" > result.json
+          echo "Result saved to result.json"
           fi
 
       - name: Upload result
