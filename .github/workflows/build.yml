@@ -1,5 +1,9 @@
 name: Android AI CI
 
+concurrency:
+  group: ai-workflow
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,6 +24,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }}
         run: |
+         for i in {1..5}; do
+         echo "Attempt $i"
+        
           RESPONSE=$(curl -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_API_KEY}" \
             -H "Content-Type: application/json" \
@@ -31,6 +38,16 @@ jobs:
             }')")
 
           echo "$RESPONSE" > response.json
+
+          if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
+             echo "Success"
+             break
+          fi
+
+          echo "Retrying in 5 seconds..."
+          sleep 5
+          
+          done
 
       - name: Extract clean text
         run: |
