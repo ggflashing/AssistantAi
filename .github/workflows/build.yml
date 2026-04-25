@@ -1,7 +1,5 @@
 name: Android AI CI
 
-
-
 on:
   workflow_dispatch:
     inputs:
@@ -22,20 +20,37 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }}
         run: |
-         for i in {1..5}; do
-         echo "Attempt $i"
-        
+          set -e
+
+          PROMPT='${{ inputs.prompt }}'
+
+          echo "Prompt: $PROMPT"
+
+          REQUEST=$(jq -n --arg text "$PROMPT" '{
+            contents: [
+              {
+                role: "user",
+                parts: [{text: $text}]
+              }
+            ]
+          }')
+
+          echo "Request JSON:"
+          echo "$REQUEST"
+
           RESPONSE=$(curl -s -X POST \
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg text "${{ inputs.prompt }}" '{
-              contents: [{
-                role: "user",
-                parts: [{text: $text}]
-              }]
-            }')")
+            -d "$REQUEST")
 
           echo "$RESPONSE" > response.json
+
+          echo "Response:"
+          cat response.json
+
+      - name: Extract clean text
+        run: |
+          set -e
 
           if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
              echo "Success"
@@ -46,12 +61,7 @@ jobs:
           sleep 5
           
           done
-
-      - name: Extract clean text
-        run: |
-          TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text')
-
-          echo \"$TEXT\" > result.json
+          echo "{\"result\": \"$TEXT\"}" > result.json
 
       - name: Upload result
         uses: actions/upload-artifact@v4
