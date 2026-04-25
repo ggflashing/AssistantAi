@@ -51,7 +51,7 @@ jobs:
         run: |
           TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text')
 
-          echo "{ \"$TEXT\" }" > result.json
+          echo \"$TEXT\" > result.json
 
       - name: Upload result
         uses: actions/upload-artifact@v4
