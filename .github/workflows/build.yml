@@ -1,8 +1,6 @@
 name: Android AI CI
 
-concurrency:
-  group: ai-workflow
-  cancel-in-progress: false
+
 
 on:
   workflow_dispatch:
