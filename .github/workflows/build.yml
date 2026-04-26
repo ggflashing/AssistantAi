@@ -27,9 +27,12 @@ jobs:
           for i in {1..5}; do
             echo "Attempt $i"
 
+            HISTORY='${{ inputs.history }}'
+            PROMPT='${{ inputs.prompt }}'
+
             REQUEST=$(jq -n \
-              --arg history "${{ inputs.history }}" \
-              --arg text "${{ inputs.prompt }}" \
+              --arg history "$HISTORY" \
+              --arg text "$PROMPT" \
               '{
                 contents: (
                   (if $history == "" then [] else ($history | fromjson) end)
@@ -41,6 +44,7 @@ jobs:
                 )
               }')
 
+            echo "REQUEST:"
             echo "$REQUEST"
 
             RESPONSE=$(curl -s -X POST \
