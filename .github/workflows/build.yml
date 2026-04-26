@@ -23,7 +23,6 @@ jobs:
           set -e
 
           PROMPT='${{ inputs.prompt }}'
-
           echo "Prompt: $PROMPT"
 
           REQUEST=$(jq -n --arg text "$PROMPT" '{
@@ -52,16 +51,19 @@ jobs:
         run: |
           set -e
 
-          if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
-             echo "Success"
-             break
+          TEXT=$(jq -r '.candidates[0].content.parts[0].text // empty' response.json)
+
+          if [ -z "$TEXT" ]; then
+            echo "ERROR: empty response"
+            exit 1
           fi
 
-          echo "Retrying in 5 seconds..."
-          sleep 5
-          
-          done
-          echo "{\"result\": \"$TEXT\"}" > result.json
+          echo "Success"
+
+          jq -n --arg result "$TEXT" '{result: $result}' > result.json
+
+          echo "Result JSON:"
+          cat result.json
 
       - name: Upload result
         uses: actions/upload-artifact@v4
