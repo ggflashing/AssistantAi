@@ -1,13 +1,15 @@
 name: Android AI CI
 
-
-
 on:
   workflow_dispatch:
     inputs:
       prompt:
         description: "Prompt from Android"
         required: true
+        type: string
+      history:
+        description: "Chat history"
+        required: false
         type: string
 
 jobs:
@@ -22,36 +24,40 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINIAPIKEY }}
         run: |
-         for i in {1..5}; do
-         echo "Attempt $i"
-        
-          RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg text "${{ inputs.prompt }}" '{
-              contents: [{
-                role: "user",
-                parts: [{text: $text}]
-              }]
-            }')")
+          for i in {1..5}; do
+            echo "Attempt $i"
 
-          echo "$RESPONSE" > response.json
+            RESPONSE=$(curl -s -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${GEMINI_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n \
+                --arg history "${{ inputs.history }}" \
+                --arg text "${{ inputs.prompt }}" \
+                '{
+                  contents: (
+                    ($history | fromjson) +
+                    [{
+                      role: "user",
+                      parts: [{text: $text}]
+                    }]
+                  )
+                }')")
 
-          if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
-             echo "Success"
-             break
-          fi
+            echo "$RESPONSE" > response.json
 
-          echo "Retrying in 5 seconds..."
-          sleep 5
-          
+            if jq -e '.candidates[0].content.parts[0].text' response.json > /dev/null; then
+              echo "Success"
+              break
+            fi
+
+            echo "Retrying in 5 seconds..."
+            sleep 5
           done
 
       - name: Extract clean text
         run: |
           TEXT=$(cat response.json | jq -r '.candidates[0].content.parts[0].text')
-
-          echo \"$TEXT\" > result.json
+          echo "$TEXT" > result.json
 
       - name: Upload result
         uses: actions/upload-artifact@v4
